@@ -9,6 +9,7 @@ body {
   color: white;
   /* background: linear-gradient(45deg,#4158D0,#C850C0,#FFCC70); */
   background-image: linear-gradient(to top, #00c6fb 0%, #005bea 100%);
+  min-width: 400px;
 }
 
 code {
