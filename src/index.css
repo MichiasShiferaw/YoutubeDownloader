@@ -1,45 +1,37 @@
 body {
   margin: 0;
-  font-family: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans',
-    sans-serif;
+  font-family: 'Helvetica Neue', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  /* height: min-content; */
+  /* height: min-content;
+     */
   min-height: 100vh;
   color: white;
   background-image: url("background.jpg");
   background-size: cover;
   background-position: center;
-      overflow-x: hidden;
-        text-align: left;
-  
-  
-  
+  overflow-x: hidden;
+  text-align: left;
   min-width: 400px;
 }
 
-
-
-
-body:before{
+body:before {
   content: "";
-    position: absolute;
-    width: 101vw;
-    height: 100vh;
-    background: inherit;
-    z-index: -1;
-    filter: blur(10px);
-    -moz-filter: blur(10px);
-    -webkit-filter: blur(10px);
-    -o-filter: blur(10px);
-    transition: all 2s linear;
-    -moz-transition: all 2s linear;
-    -webkit-transition: all 2s linear;
-    -o-transition: all 2s linear;
-      
+  position: absolute;
+  width: 101vw;
+  height: 100vh;
+  background: inherit;
+  z-index: -1;
+  filter: blur(10px);
+  -moz-filter: blur(10px);
+  -webkit-filter: blur(10px);
+  -o-filter: blur(10px);
+  transition: all 2s linear;
+  -moz-transition: all 2s linear;
+  -webkit-transition: all 2s linear;
+  -o-transition: all 2s linear;
 }
+
 code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
