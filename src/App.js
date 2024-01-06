@@ -1,41 +1,73 @@
+import { useRef, useState } from "react";
+import "./App.css";
 
-import { useRef, useState } from 'react';
-import './App.css';
-
-import axios from 'axios';
-import parser_utils from './utils';
-import Navbar from './components/Navbar';
+import axios from "axios";
+import { FileUpload, ParserUtils } from "./utils";
+import Navbar from "./components/Navbar";
 // import Steps from './components/Steps';
-// import Footer from './components/Footer';
+import Footer from "./components/Footer";
+
+// TODO: chrome.downloads.onDeterminingFilename or chrome.downloads.download
+//https://developer.chrome.com/docs/extensions/reference/api/downloads
 
 function App() {
   const inputRef = useRef();
-  const [urlResult,setUrlResult]=useState(null)
+  const [urlResults, setUrlResults] = useState([]);
 
-  const handleSubmit=(e)=>{
-    e.preventDefault()
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-    const ytID=parser_utils(inputRef.current.value)
+    const inputUrls = e.target.elements.urlInput.value.trim().split(",");
 
-    const options = {
-      method: "get",
-      url: "https://youtube-mp36.p.rapidapi.com/dl",
-      params: { id: ytID },
-      headers: {
-        "X-RapidAPI-Key": process.env.REACT_APP_RAPIDAPI_KEY,
-        "X-RapidAPI-Host": process.env.REACT_APP_RAPIDAPI_HOST,
-      },
+    const newResults = [];
+
+    for (const inputUrl of inputUrls) {
+      const trimmedUrl = inputUrl.trim();
+
+      if (trimmedUrl) {
+        const ytID = ParserUtils(trimmedUrl);
+        if (!urlResults.some((res) => res.ytId === ytID)) {
+          const options = {
+            method: "get",
+            url: "https://youtube-mp36.p.rapidapi.com/dl",
+            params: { id: ytID },
+            headers: {
+              "X-RapidAPI-Key": process.env.REACT_APP_RAPIDAPI_KEY,
+              "X-RapidAPI-Host": process.env.REACT_APP_RAPIDAPI_HOST,
+            },
+          };
+
+          try {
+            const response = await axios(options);
+            newResults.push({
+              link: response.data.link,
+              name: response.data.title,
+              ytId: ytID,
+            });
+          } catch (error) {
+            console.error("Error fetching download link:", error);
+          }
+        } else {
+          console.log("Duplicate input!");
+          continue;
+        }
+      }
     }
+    setUrlResults((prevResults) => [...newResults, ...prevResults]);
+    e.target.elements.urlInput.value = "";
+  };
 
+  const handleDownloadAll = () => {
+    urlResults.forEach(async (result, index) => {
+      console.log("Hi");
+    });
+  };
 
-    axios(options).then(res=> setUrlResult(res.data.link))
-    .catch(err=>console.log(err))
-
-
-    inputRef.current.value="";
-
-
-  }
+  const handleInputChange = () => {
+    const inputValue = inputRef.current.value;
+    const formattedValue = inputValue.replace(/,/g, "\n");
+    inputRef.current.value = formattedValue;
+  };
   return (
     <div className="App">
       <Navbar />
@@ -48,13 +80,51 @@ function App() {
 
         <form onSubmit={handleSubmit} className="form">
           <div className="input-check">
-            <input
-              placeholder="Paste Youtube video link"
-              ref={inputRef}
-              type="text"
-              className="form_input"
-            />
-            {urlResult ? (
+            <div className="input_container">
+              <textarea
+                placeholder="Paste YouTube Link"
+                ref={inputRef}
+                name="urlInput"
+                className="form_input"
+                onChange={handleInputChange}
+              />
+              <button className="search" type="submit">
+                <span>
+                  <svg
+                    viewBox="0 0 76 76"
+                    xmlns="http://www.w3.org/2000/svg"
+                    version="1.1"
+                    baseProfile="full"
+                    enable-background="new 0 0 76.00 76.00"
+                    fill="#000000"
+                    stroke="#000000"
+                    width="3.2em"
+                    height="3.2em"
+                    transform="matrix(-1, 0, 0, 1, 0, 0)"
+                  >
+                    <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
+                    <g
+                      id="SVGRepo_tracerCarrier"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    ></g>
+                    <g id="SVGRepo_iconCarrier">
+                      {" "}
+                      <path
+                        fill="#000000"
+                        fill-opacity="1"
+                        stroke-width="0.2"
+                        stroke-linejoin="round"
+                        d="M 42.5,22C 49.4036,22 55,27.5964 55,34.5C 55,41.4036 49.4036,47 42.5,47C 40.1356,47 37.9245,46.3435 36,45.2426L 26.9749,54.2678C 25.8033,55.4393 23.9038,55.4393 22.7322,54.2678C 21.5607,53.0962 21.5607,51.1967 22.7322,50.0251L 31.7971,40.961C 30.6565,39.0755 30,36.8644 30,34.5C 30,27.5964 35.5964,22 42.5,22 Z M 42.5,26C 37.8056,26 34,29.8056 34,34.5C 34,39.1944 37.8056,43 42.5,43C 47.1944,43 51,39.1944 51,34.5C 51,29.8056 47.1944,26 42.5,26 Z "
+                      ></path>{" "}
+                    </g>
+                  </svg>
+                  ;
+                </span>
+              </button>
+            </div>
+
+            {urlResults.length > 0 ? (
               <span className="checkbox">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -87,62 +157,72 @@ function App() {
                 </svg>
               </span>
             ) : (
-              <span className=""> </span>
+              <span></span>
             )}
           </div>
-          <button type="submit" className="form_button">
+          {/* <button type="submit" className="form_button">
             Search
-          </button>
+          </button> */}
+          {/* <button type="button" className="form_button">
+            Import from files
+          </button> */}
+          <FileUpload/>
         </form>
 
-        {urlResult ? (
-          <a
-            target="_blank"
-            href={urlResult}
-            rel="noreferrer"
-            className="download_btn"
-          >
-            <div className="content1">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 452.168 452.168"
-                className="w-full h-auto"
-              >
-                <g>
-                  <g>
-                    <g>
-                      <polygon
-                        style={{ fill: "#ffffff" }}
-                        points="140.446,344.424 226.096,430.075 311.739,344.424 294.352,327.037 238.395,383.002 
-				238.395,216.212 213.798,216.212 213.798,383.002 157.841,327.037 			"
-                      />
-                    </g>
-                    <g>
-                      <path
-                        style={{ fill: "#ffffff" }}
-                        d="M357.34,105.037c-4.072,0-8.185,0.268-12.282,0.797c-20.809-30.458-58.688-46.837-95.681-40.025
-				c-17.428-27.109-47.536-43.715-79.985-43.715c-49.064,0-89.414,36.896-94.576,85.139C31.084,116.613,0,154.727,0,200.207
-				c0,52.47,42.691,95.161,95.161,95.161h95.031v-24.386H95.169c-39.025,0-70.775-31.75-70.775-70.776
-				c0-36.351,27.231-66.606,63.33-70.377l10.909-2.471v-10.12c0-39.017,31.742-70.767,70.767-70.767
-				c26.743,0,50.909,14.867,63.07,38.798l4.576,8.998l9.689-2.812c32.051-9.291,65.972,5.406,81.635,33.693l4.406,7.958l8.893-1.951
-				c5.202-1.146,10.461-1.731,15.664-1.731c38.855,0,70.467,31.75,70.467,70.775c0,39.017-31.75,70.776-70.776,70.776h-95.698
-				v24.386h95.681c52.47,0,95.161-42.691,95.161-95.161C452.168,147.729,409.631,105.037,357.34,105.037z"
-                      />
-                    </g>
-                  </g>
-                </g>
-              </svg>
-              <span className="download_text">Download MP3</span>
+        {urlResults.length > 0 ? (
+          <div className="content1">
+            <div style={{ display: "flex", justifyContent: "end" }}>
+              <div>
+                <button
+                  type="button"
+                  className="downloadAll"
+                  onClick={handleDownloadAll}
+                >
+                  Download all
+                </button>
+              </div>
             </div>
-          </a>
+
+            <div className="container"></div>
+            <table className="container">
+              <thead>
+                <tr>
+                  <th>Thumbnails</th>
+                  <th className="name">Name</th>
+                  <th>Link</th>
+                </tr>
+              </thead>
+              <tbody>
+                {urlResults.map((result, index) => (
+                  <tr key={index}>
+                    <td className="thumbnails">
+                      {/* <img src="./yticon.png"></img> */}
+                    </td>
+                    {/* TODO: Hover shows name */}
+                    <td className="name">{result.name}</td>
+                    <td className="download">
+                      <a
+                        className="download text"
+                        target="_blank"
+                        href={result.link}
+                        rel="noreferrer"
+                      >
+                        Download
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         ) : (
-          ""
+          <span></span>
         )}
       </section>
 
-      {/* <Steps/>
+      {/* <Steps/>*/}
 
-      <Footer/> */}
+      <Footer />
     </div>
   );
 }
