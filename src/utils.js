@@ -12,7 +12,8 @@ export function ParserUtils(url) {
 export function FileUpload(){
   const [txtFile,setTxtFile]=useState();
 
-  const [isOpen,isSetOpen]= useState(true);
+  // const [isOpen,isSetOpen]= useState(true);
+  const [isOpen, isSetOpen] = useState(false); //TODO: Fix bug
 
 
   function handleFile(event){

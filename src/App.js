@@ -160,12 +160,6 @@ function App() {
               <span></span>
             )}
           </div>
-          {/* <button type="submit" className="form_button">
-            Search
-          </button> */}
-          {/* <button type="button" className="form_button">
-            Import from files
-          </button> */}
           <FileUpload/>
         </form>
 
@@ -196,9 +190,7 @@ function App() {
                 {urlResults.map((result, index) => (
                   <tr key={index}>
                     <td className="thumbnails">
-                      {/* <img src="./yticon.png"></img> */}
                     </td>
-                    {/* TODO: Hover shows name */}
                     <td className="name">{result.name}</td>
                     <td className="download">
                       <a

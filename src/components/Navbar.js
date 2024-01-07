@@ -1,13 +1,7 @@
 import React, { useState } from 'react';
 import {
-  HomeSign,
-  GithubIcon,
-  LinkedInIcon,
-  SunIcon,
-  YoutubeIcon,
-  ResumeIconLight,
-  SettingsIcon,
-  StepsIcon,
+
+  SettingIcon,
   MenuBar
 } from "./Icon";
 
@@ -93,7 +87,7 @@ const CustomLink = ( {tabs} ) => {
           onClick={settingPopup}
           style={{ marginRight: "0.5rem", width: "2rem", backgroundColor:"transparent", border:"none" }}
         >
-          <SettingsIcon
+          <SettingIcon
             style={{ width: "100%", height: "auto" }}
             inner={"#c9c9c9"}
             outer={"#bfbfbf"}
@@ -167,7 +161,7 @@ const CustomNavLink = ({ tabs }) => {
             width: "2rem",
           }}
         >
-          <SettingsIcon
+          <SettingIcon
             style={{ width: "100%", height: "auto" }}
             inner={"#c9c9c9"}
             outer={"#bfbfbf"}
